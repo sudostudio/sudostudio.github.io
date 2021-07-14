@@ -1,0 +1,34 @@
+name: 'Fetch Currency Rates'
+
+on:
+  workflow_dispatch:
+  schedule:
+  - cron: '0 20 * * *'
+
+jobs:
+  bot:
+    runs-on: ubuntu-20.04
+    
+    steps:
+    - name: 'Checkout Codes'
+      uses: actions/checkout@v1
+    
+    - name: 'Run Codes'
+      run: |
+        cd wealth
+        ls -al
+        python scripts/fetch_currency_rates.py
+        ls -al
+      
+    - name: "Git Commit"
+      run: |
+        git config --global user.email bot@bot.bot
+        git config --global user.name bot
+        git add .
+        git commit -m "update"
+    
+    - name: 'Push Changes'
+      uses: ad-m/github-push-action@v0.6.0
+      with:
+        branch: main
+        github_token: ${{ secrets.GIT_TOKEN }}
